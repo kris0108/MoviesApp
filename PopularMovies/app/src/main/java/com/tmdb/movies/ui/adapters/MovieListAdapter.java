@@ -5,6 +5,7 @@ import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -15,9 +16,12 @@ import com.tmdb.movies.R;
 import com.tmdb.movies.databinding.MovieListItemBinding;
 import com.tmdb.movies.model.Movie;
 import com.tmdb.movies.utils.Constants;
+import com.tmdb.movies.utils.GenresMapper;
 import com.tmdb.movies.utils.MovieUtils;
 
 public class MovieListAdapter extends PagedListAdapter<Movie, MovieListAdapter.MoviePagedViewHolder> {
+
+    private SparseArray<String> mGenreMap;
 
     public MovieListAdapter() {
         super(DIFF_CALLBACK);
@@ -52,6 +56,7 @@ public class MovieListAdapter extends PagedListAdapter<Movie, MovieListAdapter.M
 
         Movie movie = getItem(position);
         String thumbnail = Constants.IMAGE_BASE_URL + Constants.IMAGE_FILE_SIZE + movie.getPoster_path();
+        String genreValue = GenresMapper.getGenreNames(mGenreMap, movie.getGenre_ids(), 3);
 
         Picasso.with(viewHolder.itemView.getContext())
                 .load(thumbnail)
@@ -62,6 +67,7 @@ public class MovieListAdapter extends PagedListAdapter<Movie, MovieListAdapter.M
         viewHolder.title.setText(MovieUtils.
                 getTileYear(movie.getTitle(), movie.getRelease_date()));
         viewHolder.popularity.setText(String.valueOf(position+1));
+        viewHolder.genre.setText(genreValue);
     }
 
     public class MoviePagedViewHolder extends RecyclerView.ViewHolder {
@@ -70,17 +76,21 @@ public class MovieListAdapter extends PagedListAdapter<Movie, MovieListAdapter.M
 
         public ImageView thumbnail;
         public TextView title;
-        public TextView releaseYear;
         public TextView popularity;
+        public TextView genre;
 
         public MoviePagedViewHolder(MovieListItemBinding movieItemBinding) {
 
             super(movieItemBinding.getRoot());
             mMovieItemBinding = movieItemBinding;
-
             thumbnail = movieItemBinding.movieThumbnail;
             title = movieItemBinding.movieTitle;
             popularity = movieItemBinding.popularityValue;
+            genre = movieItemBinding.genre;
         }
+    }
+
+    public void setmGenreMap(SparseArray<String> genreMap) {
+        mGenreMap = genreMap;
     }
 }

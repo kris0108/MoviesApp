@@ -10,15 +10,21 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.tmdb.movies.R;
 import com.tmdb.movies.databinding.FragMovieListBinding;
+import com.tmdb.movies.model.Genre;
 import com.tmdb.movies.model.Movie;
 import com.tmdb.movies.ui.adapters.MovieListAdapter;
+import com.tmdb.movies.utils.GenresMapper;
 import com.tmdb.movies.viewmodel.MovieListViewModel;
+
+import java.util.List;
 
 import timber.log.Timber;
 
@@ -48,6 +54,7 @@ public class MovieListFragment extends Fragment {
         mMovieListViewModel = ViewModelProviders.of(this)
                 .get(MovieListViewModel.class);
         observeForMovies();
+        observeForGenres();
         setSwipeRefreshLayout();
     }
 
@@ -71,6 +78,20 @@ public class MovieListFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+    private void observeForGenres() {
+        Timber.d("observeForGenres");
+        mMovieListViewModel.getGenreList().observe(this, new Observer<List<Genre>>() {
+            @Override
+            public void onChanged(@Nullable List<Genre> genres) {
+                if (null != genres) {
+                    Timber.d("genres size:" + genres.size());
+                    SparseArray<String> genresMap = GenresMapper.toSparseArray(genres);
+                    mMovieListAdapter.setmGenreMap(genresMap);
+                }
+            }
+        });
     }
 
     private void setSwipeRefreshLayout() {

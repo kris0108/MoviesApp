@@ -1,24 +1,18 @@
 package com.tmdb.movies.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Movie {
+public class Movie implements Parcelable {
 
-    @SerializedName("vote_count")
-    @Expose
-    private float vote_count;
     @SerializedName("id")
     @Expose
     private float id;
-    @SerializedName("video")
-    @Expose
-    private boolean video;
-    @SerializedName("vote_average")
-    @Expose
-    private float vote_average;
     @SerializedName("title")
     @Expose
     private String title;
@@ -28,42 +22,15 @@ public class Movie {
     @SerializedName("poster_path")
     @Expose
     private String poster_path;
-    @SerializedName("original_language")
-    @Expose
-    private String original_language;
-    @SerializedName("original_title")
-    @Expose
-    private String original_title;
     @SerializedName("genre_ids")
     @Expose
     List<Integer> genre_ids;
-    @SerializedName("backdrop_path")
-    @Expose
-    private String backdrop_path;
-    @SerializedName("adult")
-    @Expose
-    private boolean adult;
-    @SerializedName("overview")
-    @Expose
-    private String overview;
     @SerializedName("release_date")
     @Expose
     private String release_date;
 
-    public float getVote_count() {
-        return vote_count;
-    }
-
     public float getId() {
         return id;
-    }
-
-    public boolean getVideo() {
-        return video;
-    }
-
-    public float getVote_average() {
-        return vote_average;
     }
 
     public String getTitle() {
@@ -78,26 +45,6 @@ public class Movie {
         return poster_path;
     }
 
-    public String getOriginal_language() {
-        return original_language;
-    }
-
-    public String getOriginal_title() {
-        return original_title;
-    }
-
-    public String getBackdrop_path() {
-        return backdrop_path;
-    }
-
-    public boolean getAdult() {
-        return adult;
-    }
-
-    public String getOverview() {
-        return overview;
-    }
-
     public String getRelease_date() {
         return release_date;
     }
@@ -106,4 +53,48 @@ public class Movie {
         return genre_ids;
     }
 
+/*    public Movie(int id, String title, String posterPath, float popularity,
+                 List<Integer> genreIds, String releaseDate) {
+        this.id = id;
+        this.title = title;
+        this.poster_path = posterPath;
+        this.popularity = popularity;
+        this.release_date = releaseDate;
+        this.genre_ids = genreIds;
+    }*/
+
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+
+        public Movie createFromParcel(Parcel in){
+            return new Movie(in);
+        }
+
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
+
+    private Movie(Parcel in) {
+        id = in.readInt();
+        title = in.readString();
+        poster_path = in.readString();
+        popularity = in.readFloat();
+        release_date = in.readString();
+        in.readList(this.genre_ids, Integer.class.getClassLoader());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeString(this.title);
+        dest.writeString(this.poster_path);
+        dest.writeValue(this.popularity);
+        dest.writeString(this.release_date);
+        dest.writeList(this.genre_ids);
+    }
 }

@@ -93,11 +93,15 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/colorAccent"
+                android:textStyle="normal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.08"
-                app:layout_constraintStart_toEndOf="@+id/movie_thumbnail"
-                app:layout_constraintTop_toBottomOf="@+id/popularityLabel" />
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/barrier"
+                app:layout_constraintTop_toBottomOf="@+id/popularityLabel"
+                app:layout_constraintVertical_bias="0.179" />
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
