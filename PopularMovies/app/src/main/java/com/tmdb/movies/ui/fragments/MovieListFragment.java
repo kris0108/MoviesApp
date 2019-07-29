@@ -1,5 +1,6 @@
 package com.tmdb.movies.ui.fragments;
 
+import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
@@ -20,7 +21,9 @@ import com.tmdb.movies.R;
 import com.tmdb.movies.databinding.FragMovieListBinding;
 import com.tmdb.movies.model.Genre;
 import com.tmdb.movies.model.Movie;
+import com.tmdb.movies.ui.MoviesLauncherActivity;
 import com.tmdb.movies.ui.adapters.MovieListAdapter;
+import com.tmdb.movies.utils.Constants;
 import com.tmdb.movies.utils.GenresMapper;
 import com.tmdb.movies.viewmodel.MovieListViewModel;
 
@@ -28,7 +31,9 @@ import java.util.List;
 
 import timber.log.Timber;
 
-public class MovieListFragment extends Fragment {
+public class MovieListFragment extends Fragment
+        implements MovieListAdapter.MovieListAdapterOnClickHandler {
+
     MovieListAdapter mMovieListAdapter;
     FragMovieListBinding mMovieListFragBinding;
     MovieListViewModel mMovieListViewModel;
@@ -42,7 +47,7 @@ public class MovieListFragment extends Fragment {
         mMovieListFragBinding = DataBindingUtil.inflate(inflater,
                 R.layout.frag_movie_list, container, false);
         mRecyclerView = mMovieListFragBinding.movieList;
-        mMovieListAdapter = new MovieListAdapter();
+        mMovieListAdapter = new MovieListAdapter(this);
         mMovieListFragBinding.movieList.setAdapter(mMovieListAdapter);
         mMovieListFragBinding.setIsLoading(true);
         return mMovieListFragBinding.getRoot();
@@ -53,8 +58,8 @@ public class MovieListFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mMovieListViewModel = ViewModelProviders.of(this)
                 .get(MovieListViewModel.class);
-        observeForMovies();
         observeForGenres();
+        observeForMovies();
         setSwipeRefreshLayout();
     }
 
@@ -114,5 +119,14 @@ public class MovieListFragment extends Fragment {
     private void hideRefresh() {
         Timber.d("hideRefresh");
         mMovieListFragBinding.swipeRefresh.setRefreshing(false);
+    }
+
+    @Override
+    public void onItemClick(Movie movie) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(Constants.EXTRA_MOVIE, movie);
+        if (getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+            ((MoviesLauncherActivity) getActivity()).show(bundle);
+        }
     }
 }

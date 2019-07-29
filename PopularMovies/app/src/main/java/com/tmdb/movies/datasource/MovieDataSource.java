@@ -63,7 +63,7 @@ public class MovieDataSource extends PageKeyedDataSource<Integer, Movie> {
         Timber.d("loadAfter");
         final int currentPage = params.key;
         mMovieApiRepository.getMovies(Constants.QUERY_CRITERIA, Constants.API_KEY,
-                                          Constants.LANGUAGE, Constants.INIT_PAGE)
+                                          Constants.LANGUAGE, currentPage)
                 .enqueue(new Callback<MovieResponse>() {
                     @Override
                     public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {

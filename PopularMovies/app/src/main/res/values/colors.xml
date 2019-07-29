@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#60d81b</color>
+    <color name="colorPrimary">@color/card_background</color>
+    <color name="colorPrimaryDark">@color/blue_grey_dark</color>
+    <color name="colorRadium">#60d81b</color>
     <color name="colorLight">#ffffff</color>
+    <color name="card_background">#263238</color>
+    <color name="blue_grey_dark">#000a12</color>
+    <color name="colorAccent">#8BC34A</color>
+
 </resources>

@@ -7,6 +7,7 @@ import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,8 +24,15 @@ public class MovieListAdapter extends PagedListAdapter<Movie, MovieListAdapter.M
 
     private SparseArray<String> mGenreMap;
 
-    public MovieListAdapter() {
+    private final MovieListAdapter.MovieListAdapterOnClickHandler mOnClickHandler;
+
+    public interface MovieListAdapterOnClickHandler {
+        void onItemClick(Movie movie);
+    }
+
+    public MovieListAdapter(MovieListAdapterOnClickHandler onClickHandler) {
         super(DIFF_CALLBACK);
+        mOnClickHandler = onClickHandler;
     }
 
     private static DiffUtil.ItemCallback<Movie> DIFF_CALLBACK =
@@ -70,7 +78,8 @@ public class MovieListAdapter extends PagedListAdapter<Movie, MovieListAdapter.M
         viewHolder.genre.setText(genreValue);
     }
 
-    public class MoviePagedViewHolder extends RecyclerView.ViewHolder {
+    public class MoviePagedViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener{
 
         private MovieListItemBinding mMovieItemBinding;
 
@@ -87,6 +96,14 @@ public class MovieListAdapter extends PagedListAdapter<Movie, MovieListAdapter.M
             title = movieItemBinding.movieTitle;
             popularity = movieItemBinding.popularityValue;
             genre = movieItemBinding.genre;
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int adapterPosition = getAdapterPosition();
+            Movie movie = getItem(adapterPosition);
+            mOnClickHandler.onItemClick(movie);
         }
     }
 
