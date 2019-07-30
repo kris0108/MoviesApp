@@ -8,11 +8,11 @@ Next Steps:
 2.	Search bar in the home page.
 
 Libraries used:
-•	Architecture components
-  > Paging
-  >	ViewModel
-  >	LiveData
-•	Android Data binding
-•	Retrofit2 for REST api 
-•	Picasso for image loading
-•	Timber for logging
+1. Architecture components
+   > Paging
+   > ViewModel
+   > LiveData
+2. Android Data binding
+3. Retrofit2 for REST api 
+4. Picasso for image loading
+5. Timber for logging
