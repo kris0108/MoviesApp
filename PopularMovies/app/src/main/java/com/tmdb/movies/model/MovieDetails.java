@@ -9,7 +9,7 @@ public class MovieDetails {
 
     @SerializedName("genres")
     @Expose
-    private List<Genre> mGenres = null;
+    private List<Genre> genres = null;
 
     @SerializedName("overview")
     @Expose
@@ -17,22 +17,22 @@ public class MovieDetails {
 
     @SerializedName("runtime")
     @Expose
-    private int mRuntime;
+    private int runtime;
 
     @SerializedName("homepage")
     @Expose
     private String homepage;
 
-    public List<Genre> getmGenres() {
-        return mGenres;
+    public List<Genre> getGenres() {
+        return genres;
     }
 
     public String getOverview() {
         return overview;
     }
 
-    public int getmRuntime() {
-        return mRuntime;
+    public int getRuntime() {
+        return runtime;
     }
 
     public String getHomepage() {

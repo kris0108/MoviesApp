@@ -88,8 +88,9 @@ public class MovieApiRepository {
     }
 
     public LiveData<MovieDetails> getMovieDetails(float movieId) {
-        final MutableLiveData<MovieDetails> movieDetails = new MutableLiveData<>();
 
+        Timber.d("getMovieDetails:"+movieId);
+        final MutableLiveData<MovieDetails> movieDetails = new MutableLiveData<>();
         mMovieApi.getDetails(movieId, Constants.API_KEY, Constants.LANGUAGE)
                 .enqueue(new Callback<MovieDetails>() {
                     @Override

@@ -1,31 +1,32 @@
 package com.tmdb.movies.viewmodel;
 
-import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
-import android.support.annotation.NonNull;
 
-import com.tmdb.movies.model.Movie;
 import com.tmdb.movies.model.MovieDetails;
 import com.tmdb.movies.repository.MovieApiRepository;
+
+import timber.log.Timber;
 
 public class MovieDetailsViewModel extends ViewModel {
 
     private final LiveData<MovieDetails> mMovieDetails;
 
-    public MovieDetailsViewModel (float movieId) {
+    public MovieDetailsViewModel(float movieId) {
         MovieApiRepository movieApiRepository = MovieApiRepository.getInstance();
         mMovieDetails = movieApiRepository.getMovieDetails(movieId);
     }
 
     public LiveData<MovieDetails> getMovieDetails() {
+        Timber.d("MovieDetailsViewModel getMovieDetails");
         return mMovieDetails;
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
 
         private final float mMovieId;
+        //  Application application;
 
         public Factory(float movieId) {
             mMovieId = movieId;

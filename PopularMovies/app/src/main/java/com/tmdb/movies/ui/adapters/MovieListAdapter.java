@@ -53,7 +53,7 @@ public class MovieListAdapter extends PagedListAdapter<Movie, MovieListAdapter.M
     @Override
     public MoviePagedViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
-       MovieListItemBinding mMovieItemBinding = DataBindingUtil.inflate(
+        MovieListItemBinding mMovieItemBinding = DataBindingUtil.inflate(
                 layoutInflater, R.layout.movie_list_item, viewGroup, false);
 
         return new MoviePagedViewHolder(mMovieItemBinding);
@@ -74,12 +74,12 @@ public class MovieListAdapter extends PagedListAdapter<Movie, MovieListAdapter.M
 
         viewHolder.title.setText(MovieUtils.
                 getTileYear(movie.getTitle(), movie.getRelease_date()));
-        viewHolder.popularity.setText(String.valueOf(position+1));
+        viewHolder.popularity.setText(String.valueOf(position + 1));
         viewHolder.genre.setText(genreValue);
     }
 
     public class MoviePagedViewHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener{
+            implements View.OnClickListener {
 
         private MovieListItemBinding mMovieItemBinding;
 

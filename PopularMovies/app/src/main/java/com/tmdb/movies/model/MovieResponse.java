@@ -18,7 +18,7 @@ public class MovieResponse {
     private float total_pages;
     @SerializedName("results")
     @Expose
-    List< Movie > results;
+    List<Movie> results;
 
     public float getPage() {
         return page;

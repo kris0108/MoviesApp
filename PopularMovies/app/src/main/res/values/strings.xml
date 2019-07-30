@@ -1,6 +1,8 @@
 <resources>
-    <string name="app_name">PopularMovies</string>
+    <string name="app_name">Popular Movies</string>
     <string name="loading_movies">Loading Movies ...</string>
     <string name="movie_list">Movies List</string>
     <string name="popularity">Popularity : </string>
+    <string name="space">\u0020</string>
+    <string name="overviewLabel"></string>
 </resources>
