@@ -7,6 +7,11 @@ Next Steps:
 1.	Provide Cache mechanism
 2.	Search bar in the home page.
 
+Design:
+Basically I have implemented MVVM architecture and as part of that created MovieListFragment and MovieDetailsFragment subscribes for the ViewModels to fetch/observe for data from the network through repository module and update UI.
+In order to fetch and load each  subset of data I have used Paging Library and RecyclerView to create list with Movies information fetched from TMDB. 
+
+
 Libraries used:
 1. Architecture components
    > Paging
