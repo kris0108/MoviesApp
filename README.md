@@ -1,4 +1,5 @@
 Project overview:
+
 This application has been developed based on https://developers.themoviedb.org API.
 Application consists of home page with list of popular movies and movie details page.
 
