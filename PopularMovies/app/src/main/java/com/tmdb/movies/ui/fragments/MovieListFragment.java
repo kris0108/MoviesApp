@@ -10,13 +10,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,7 +23,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.tmdb.movies.R;
 import com.tmdb.movies.databinding.FragMovieListBinding;
@@ -32,6 +30,8 @@ import com.tmdb.movies.model.Genre;
 import com.tmdb.movies.model.Movie;
 import com.tmdb.movies.ui.MoviesLauncherActivity;
 import com.tmdb.movies.ui.adapters.MovieListAdapter;
+import com.tmdb.movies.ui.adapters.MovieListOnClickHandler;
+import com.tmdb.movies.ui.adapters.SearchMovieAdapter;
 import com.tmdb.movies.utils.Constants;
 import com.tmdb.movies.utils.GenresMapper;
 import com.tmdb.movies.viewmodel.MovieListViewModel;
@@ -43,15 +43,18 @@ import timber.log.Timber;
 import static android.content.Context.SEARCH_SERVICE;
 
 public class MovieListFragment extends Fragment
-        implements MovieListAdapter.MovieListAdapterOnClickHandler/*,
-        SearchView.OnQueryTextListener*/ {
+        implements MovieListOnClickHandler {
 
     MovieListAdapter mMovieListAdapter;
+    SearchMovieAdapter mSearchMovieAdapter;
     FragMovieListBinding mMovieListFragBinding;
     MovieListViewModel mMovieListViewModel;
     RecyclerView mRecyclerView;
     RecyclerView mSearchResult;
     Toolbar mToolBar;
+
+    private List<Movie> mMovieList;
+    private SparseArray<String> mGenresMap;
 
     @Nullable
     @Override
@@ -62,11 +65,14 @@ public class MovieListFragment extends Fragment
                 R.layout.frag_movie_list, container, false);
         mRecyclerView = mMovieListFragBinding.movieList;
         mToolBar = mMovieListFragBinding.toolbar;
-        mSearchResult = mMovieListFragBinding.searchResults;
 
         mMovieListAdapter = new MovieListAdapter(this);
         mMovieListFragBinding.movieList.setAdapter(mMovieListAdapter);
         mMovieListFragBinding.setIsLoading(true);
+
+        mSearchResult = mMovieListFragBinding.searchResults;
+        mSearchMovieAdapter = new SearchMovieAdapter(this);
+
         setHasOptionsMenu(true);
         return mMovieListFragBinding.getRoot();
     }
@@ -80,12 +86,13 @@ public class MovieListFragment extends Fragment
         observeForGenres();
         observeForMovies();
         setSwipeRefreshLayout();
-
     }
 
+
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onStart() {
+        super.onStart();
+        Timber.d("onStart");
     }
 
     private void observeForMovies() {
@@ -95,7 +102,6 @@ public class MovieListFragment extends Fragment
                     @Override
                     public void onChanged(@Nullable PagedList<Movie> pagedList) {
                         if (pagedList != null) {
-                            Timber.d("pagedList size:" + pagedList.size());
                             mMovieListFragBinding.setIsLoading(false);
                             mMovieListAdapter.submitList(pagedList);
                         } else {
@@ -112,8 +118,8 @@ public class MovieListFragment extends Fragment
             public void onChanged(@Nullable List<Genre> genres) {
                 if (null != genres) {
                     Timber.d("genres size:" + genres.size());
-                    SparseArray<String> genresMap = GenresMapper.toSparseArray(genres);
-                    mMovieListAdapter.setmGenreMap(genresMap);
+                    mGenresMap = GenresMapper.toSparseArray(genres);
+                    mMovieListAdapter.setmGenreMap(mGenresMap);
                 } else {
                     Timber.e("Error in retrieving genres");
                 }
@@ -166,18 +172,19 @@ public class MovieListFragment extends Fragment
         SearchManager searchManager =
                 (SearchManager) getActivity().getBaseContext().getSystemService(SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        searchView.setIconifiedByDefault(true);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Timber.d("SearchResule setOnQueryTextListener");
-
+                Timber.d("onQueryTextSubmit");
+                mMovieListFragBinding.setIsLoading(true);
+                searchMovieByTitle(query);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-
                 return false;
             }
         });
@@ -185,17 +192,33 @@ public class MovieListFragment extends Fragment
         searchMenu.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem menuItem) {
-                Timber.d("SearchResule onMenuItemActionExpand");
+                Timber.d("onMenuItemActionExpand");
                 mSearchResult.setVisibility(View.VISIBLE);
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem menuItem) {
-                Timber.d("SearchResule onMenuItemActionCollapse");
+                Timber.d("onMenuItemActionCollapse");
                 mSearchResult.setVisibility(View.GONE);
                 return true;
             }
         });
+    }
+
+    private void searchMovieByTitle(String query) {
+        if (!TextUtils.isEmpty(query)) {
+            mMovieListViewModel.getMovieByTitle(query).observe(this, new Observer<List<Movie>>() {
+                @Override
+                public void onChanged(@Nullable List<Movie> movies) {
+                    if (null != movies) {
+                        mMovieListFragBinding.setIsLoading(false);
+                        mSearchResult.setAdapter(mSearchMovieAdapter);
+                        mSearchMovieAdapter.setmMovieList(movies);
+                        mSearchMovieAdapter.setmGenreMap(mGenresMap);
+                    }
+                }
+            });
+        }
     }
 }

@@ -32,4 +32,10 @@ public interface MovieAPI {
             @Query("language") String language
     );
 
+    @GET("/3/search/movie")
+    Call<MovieResponse> searchMoviesByTitle(
+            @Query("api_key") String apiKey,
+            @Query("language") String language,
+            @Query("query") String movieTitle);
+
 }

@@ -1,9 +1,7 @@
 package com.tmdb.movies.ui.adapters;
 
-import android.arch.paging.PagedListAdapter;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
-import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -20,51 +18,33 @@ import com.tmdb.movies.utils.Constants;
 import com.tmdb.movies.utils.GenresMapper;
 import com.tmdb.movies.utils.MovieUtils;
 
-public class MovieListAdapter extends PagedListAdapter<Movie, MovieListAdapter.MoviePagedViewHolder> {
+import java.util.ArrayList;
+import java.util.List;
 
+public class SearchMovieAdapter extends RecyclerView.Adapter<SearchMovieAdapter.MovieViewHolder> {
+
+    private List<Movie> mMovieList;
     private SparseArray<String> mGenreMap;
-
-    //private final MovieListAdapter.MovieListAdapterOnClickHandler mOnClickHandler;
-
-    /*public interface MovieListAdapterOnClickHandler {
-        void onItemClick(Movie movie);
-    }*/
 
     private final MovieListOnClickHandler mOnClickHandler;
 
-    public MovieListAdapter(MovieListOnClickHandler onClickHandler) {
-        super(DIFF_CALLBACK);
+    public SearchMovieAdapter(MovieListOnClickHandler onClickHandler) {
         mOnClickHandler = onClickHandler;
     }
 
-    private static DiffUtil.ItemCallback<Movie> DIFF_CALLBACK =
-            new DiffUtil.ItemCallback<Movie>() {
-                @Override
-                public boolean areItemsTheSame(Movie oldItem, Movie newItem) {
-                    return oldItem.getId() == newItem.getId();
-                }
-
-                @Override
-                public boolean areContentsTheSame(Movie oldItem, Movie newItem) {
-                    return oldItem.equals(newItem);
-                }
-            };
-
-
     @NonNull
     @Override
-    public MoviePagedViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public MovieViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
         MovieListItemBinding mMovieItemBinding = DataBindingUtil.inflate(
                 layoutInflater, R.layout.movie_list_item, viewGroup, false);
 
-        return new MoviePagedViewHolder(mMovieItemBinding);
+        return new SearchMovieAdapter.MovieViewHolder(mMovieItemBinding);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MoviePagedViewHolder viewHolder, int position) {
-
-        Movie movie = getItem(position);
+    public void onBindViewHolder(@NonNull MovieViewHolder viewHolder, int position) {
+        Movie movie = mMovieList.get(position);
         String thumbnail = Constants.IMAGE_BASE_URL + Constants.IMAGE_FILE_SIZE + movie.getPoster_path();
         String genreValue = GenresMapper.getGenreNames(mGenreMap, movie.getGenre_ids(), 3);
 
@@ -80,7 +60,12 @@ public class MovieListAdapter extends PagedListAdapter<Movie, MovieListAdapter.M
         viewHolder.genre.setText(genreValue);
     }
 
-    public class MoviePagedViewHolder extends RecyclerView.ViewHolder
+    @Override
+    public int getItemCount() {
+        return mMovieList.size();
+    }
+
+    public class MovieViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
         private MovieListItemBinding mMovieItemBinding;
@@ -90,7 +75,7 @@ public class MovieListAdapter extends PagedListAdapter<Movie, MovieListAdapter.M
         public TextView popularity;
         public TextView genre;
 
-        public MoviePagedViewHolder(MovieListItemBinding movieItemBinding) {
+        public MovieViewHolder(MovieListItemBinding movieItemBinding) {
 
             super(movieItemBinding.getRoot());
             mMovieItemBinding = movieItemBinding;
@@ -104,12 +89,18 @@ public class MovieListAdapter extends PagedListAdapter<Movie, MovieListAdapter.M
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            Movie movie = getItem(adapterPosition);
+            Movie movie = mMovieList.get(adapterPosition);
             mOnClickHandler.onItemClick(movie);
         }
+    }
+
+    public void setmMovieList(List<Movie> movieList) {
+        mMovieList = movieList;
+        notifyDataSetChanged();
     }
 
     public void setmGenreMap(SparseArray<String> genreMap) {
         mGenreMap = genreMap;
     }
+
 }

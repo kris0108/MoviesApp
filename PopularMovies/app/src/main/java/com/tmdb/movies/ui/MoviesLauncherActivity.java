@@ -1,15 +1,7 @@
 package com.tmdb.movies.ui;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.widget.ImageView;
 
 import com.tmdb.movies.R;
 import com.tmdb.movies.ui.fragments.MovieDetailsFragment;
@@ -42,10 +34,5 @@ public class MoviesLauncherActivity extends AppCompatActivity {
                 .addToBackStack(MovieDetailsFragment.class.toString())
                 .replace(R.id.fragment_container,
                         movieDetailsFragment, MovieDetailsFragment.class.toString()).commit();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
     }
 }

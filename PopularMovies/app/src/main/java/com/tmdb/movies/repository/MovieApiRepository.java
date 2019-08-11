@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 
 import com.tmdb.movies.model.Genre;
 import com.tmdb.movies.model.GenreResponse;
+import com.tmdb.movies.model.Movie;
 import com.tmdb.movies.model.MovieDetails;
 import com.tmdb.movies.model.MovieResponse;
 import com.tmdb.movies.utils.Constants;
@@ -108,4 +109,26 @@ public class MovieApiRepository {
                 });
         return movieDetails;
     }
+
+    public LiveData<List<Movie>> getMoviesByTitle(String title) {
+        final MutableLiveData<List<Movie>> movies = new MutableLiveData<>();
+
+        mMovieApi.searchMoviesByTitle(Constants.API_KEY, Constants.LANGUAGE, title)
+                .enqueue(new Callback<MovieResponse>() {
+                    @Override
+                    public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
+                        if(null != response) {
+                          //  Timber.i(response.body().toString());
+                            movies.setValue(response.body().getResults());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<MovieResponse> call, Throwable t) {
+                        Timber.e(t.getMessage());
+                    }
+                });
+        return movies;
+    }
+
 }

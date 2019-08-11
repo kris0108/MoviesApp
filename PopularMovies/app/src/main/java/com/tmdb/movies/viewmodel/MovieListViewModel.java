@@ -58,4 +58,8 @@ public class MovieListViewModel extends ViewModel {
     public LiveData<List<Genre>> getGenreList() {
         return mGenreList;
     }
+
+    public LiveData<List<Movie>> getMovieByTitle(String title) {
+        return mMovieApiRepository.getMoviesByTitle(title);
+    }
 }
