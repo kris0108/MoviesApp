@@ -4,5 +4,5 @@
     <string name="movie_list">Movies List</string>
     <string name="popularity">Popularity : </string>
     <string name="space">\u0020</string>
-    <string name="overviewLabel"></string>
+    <string name="hint_search">Search Movies</string>
 </resources>

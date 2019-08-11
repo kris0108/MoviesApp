@@ -3,8 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <import type="android.view.View" />
-        <variable name="isLoading" type="boolean" />
+
+        <variable
+            name="isLoading"
+            type="boolean" />
     </data>
 
     <LinearLayout
@@ -27,17 +31,32 @@
             android:orientation="vertical"
             android:visibility="@{isLoading ? View.GONE : View.VISIBLE}">
 
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/search_results"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
+
             <android.support.v4.widget.SwipeRefreshLayout
                 android:id="@+id/swipe_refresh"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/movie_list"
-                android:contentDescription="@string/movie_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="LinearLayoutManager"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/movie_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/movie_list"
+                    app:layoutManager="LinearLayoutManager" />
 
             </android.support.v4.widget.SwipeRefreshLayout>
 

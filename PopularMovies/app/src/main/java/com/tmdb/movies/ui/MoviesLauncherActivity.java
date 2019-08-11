@@ -1,8 +1,15 @@
 package com.tmdb.movies.ui;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.ImageView;
 
 import com.tmdb.movies.R;
 import com.tmdb.movies.ui.fragments.MovieDetailsFragment;
@@ -25,18 +32,9 @@ public class MoviesLauncherActivity extends AppCompatActivity {
                             MovieListFragment.class.toString()).commit();
             getSupportFragmentManager().executePendingTransactions();
         }
-
-       Fragment fragment = getSupportFragmentManager().
-                findFragmentByTag(MovieDetailsFragment.class.toString());
-        if(null != fragment) {
-            getSupportActionBar().hide();
-        }
-
     }
 
     public void show(Bundle bundle) {
-        setTheme(R.style.DetailTheme);
-        getSupportActionBar().hide();
         MovieDetailsFragment movieDetailsFragment = new MovieDetailsFragment();
         movieDetailsFragment.setArguments(bundle);
         getSupportFragmentManager()
@@ -49,6 +47,5 @@ public class MoviesLauncherActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        getSupportActionBar().show();
     }
 }
