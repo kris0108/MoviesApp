@@ -18,7 +18,6 @@ import com.tmdb.movies.utils.Constants;
 import com.tmdb.movies.utils.GenresMapper;
 import com.tmdb.movies.utils.MovieUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SearchMovieAdapter extends RecyclerView.Adapter<SearchMovieAdapter.MovieViewHolder> {

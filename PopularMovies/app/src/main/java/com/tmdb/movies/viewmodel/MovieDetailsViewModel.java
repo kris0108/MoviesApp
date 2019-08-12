@@ -1,20 +1,25 @@
 package com.tmdb.movies.viewmodel;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
+import android.support.annotation.NonNull;
 
 import com.tmdb.movies.model.MovieDetails;
 import com.tmdb.movies.repository.MovieApiRepository;
 
 import timber.log.Timber;
 
-public class MovieDetailsViewModel extends ViewModel {
+public class MovieDetailsViewModel extends AndroidViewModel {
 
     private final LiveData<MovieDetails> mMovieDetails;
 
-    public MovieDetailsViewModel(float movieId) {
-        MovieApiRepository movieApiRepository = MovieApiRepository.getInstance();
+    public MovieDetailsViewModel(@NonNull Application application, float movieId) {
+        super(application);
+        MovieApiRepository movieApiRepository = MovieApiRepository
+                .getInstance(application.getApplicationContext());
         mMovieDetails = movieApiRepository.getMovieDetails(movieId);
     }
 
@@ -26,16 +31,16 @@ public class MovieDetailsViewModel extends ViewModel {
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
 
         private final float mMovieId;
-        //  Application application;
+        private Application mApplication;
 
-        public Factory(float movieId) {
+        public Factory(Application application, float movieId) {
+            mApplication = application;
             mMovieId = movieId;
         }
 
         @Override
         public <T extends ViewModel> T create(Class<T> modelClass) {
-            //noinspection unchecked
-            return (T) new MovieDetailsViewModel(mMovieId);
+            return (T) new MovieDetailsViewModel(mApplication, mMovieId);
         }
     }
 

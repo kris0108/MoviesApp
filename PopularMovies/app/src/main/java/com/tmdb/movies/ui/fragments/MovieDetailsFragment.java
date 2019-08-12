@@ -56,7 +56,8 @@ public class MovieDetailsFragment extends Fragment {
         mMovieEntry = new MovieEntry();
         loadMoviePoster();
 
-        MovieDetailsViewModel.Factory factory = new MovieDetailsViewModel.Factory(mMovie.getId());
+        MovieDetailsViewModel.Factory factory = new MovieDetailsViewModel
+                .Factory(getActivity().getApplication(), mMovie.getId());
         MovieDetailsViewModel movieDetailsViewModel = ViewModelProviders.of(this, factory)
                 .get(MovieDetailsViewModel.class);
 

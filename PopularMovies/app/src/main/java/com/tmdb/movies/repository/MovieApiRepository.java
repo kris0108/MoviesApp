@@ -2,6 +2,7 @@ package com.tmdb.movies.repository;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.content.Context;
 
 import com.tmdb.movies.model.Genre;
 import com.tmdb.movies.model.GenreResponse;
@@ -9,10 +10,16 @@ import com.tmdb.movies.model.Movie;
 import com.tmdb.movies.model.MovieDetails;
 import com.tmdb.movies.model.MovieResponse;
 import com.tmdb.movies.utils.Constants;
+import com.tmdb.movies.utils.MovieUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
+import okhttp3.Cache;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,7 +34,10 @@ public class MovieApiRepository {
     private static MovieApiRepository mMovieApiRepository;
     private Retrofit mRetrofit;
 
-    private MovieApiRepository() {
+    private final long mCacheValue = 5 * 1024 * 1024;
+    public static final String HEADER_CACHE_CONTROL = "Cache-Control";
+
+    private MovieApiRepository(final Context context) {
 
         Timber.plant(new Timber.DebugTree());
         HttpLoggingInterceptor httpLoggingInterceptor = new
@@ -42,7 +52,22 @@ public class MovieApiRepository {
 
         OkHttpClient okHttpClient = new OkHttpClient()
                 .newBuilder()
+                .cache(getCache(context))
                 .addInterceptor(httpLoggingInterceptor)
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public okhttp3.Response intercept(Chain chain) throws IOException {
+                        Request request = chain.request();
+                        if(!MovieUtils.isConnected(context)) {
+                            request = request.newBuilder().header(HEADER_CACHE_CONTROL,
+                                    "public, only-if-cached, max-stale="
+                                            + 60 * 60 * 24).build();
+                            okhttp3.Response response = chain.proceed(request);
+                            return response;
+                        }
+                        return chain.proceed(request);
+                    }
+                })
                 .build();
 
         mRetrofit = new Retrofit.Builder()
@@ -54,9 +79,16 @@ public class MovieApiRepository {
         mMovieApi = mRetrofit.create(MovieAPI.class);
     }
 
-    public static MovieApiRepository getInstance() {
+    private Cache getCache(Context context) {
+        Cache cache = null;
+        cache = new Cache(new File(context.getCacheDir(), "http-cache"),
+                mCacheValue);
+        return cache;
+    }
+
+    public static MovieApiRepository getInstance(Context context) {
         if (null == mMovieApiRepository) {
-            mMovieApiRepository = new MovieApiRepository();
+            mMovieApiRepository = new MovieApiRepository(context);
         }
         return mMovieApiRepository;
     }
@@ -96,7 +128,7 @@ public class MovieApiRepository {
                 .enqueue(new Callback<MovieDetails>() {
                     @Override
                     public void onResponse(Call<MovieDetails> call, Response<MovieDetails> response) {
-                        if(null != response) {
+                        if(null != response.body()) {
                             Timber.i(response.body().toString());
                             movieDetails.setValue(response.body());
                         }
@@ -117,8 +149,8 @@ public class MovieApiRepository {
                 .enqueue(new Callback<MovieResponse>() {
                     @Override
                     public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
-                        if(null != response) {
-                          //  Timber.i(response.body().toString());
+                        if(null != response.body()) {
+                            Timber.i(response.body().toString());
                             movies.setValue(response.body().getResults());
                         }
                     }

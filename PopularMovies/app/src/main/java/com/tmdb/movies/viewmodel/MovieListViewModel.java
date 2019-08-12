@@ -1,9 +1,11 @@
 package com.tmdb.movies.viewmodel;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
+import android.support.annotation.NonNull;
 
 import com.tmdb.movies.datasource.MovieDataSourceFactory;
 import com.tmdb.movies.model.Genre;
@@ -16,14 +18,16 @@ import java.util.concurrent.Executors;
 
 import timber.log.Timber;
 
-public class MovieListViewModel extends ViewModel {
+public class MovieListViewModel extends AndroidViewModel {
 
     private MovieApiRepository mMovieApiRepository;
     private LiveData<List<Genre>> mGenreList;
     private LiveData<PagedList<Movie>> mMoviePagedList;
 
-    public MovieListViewModel() {
-        mMovieApiRepository = MovieApiRepository.getInstance();
+    public MovieListViewModel(@NonNull Application application) {
+        super(application);
+        mMovieApiRepository = MovieApiRepository
+                .getInstance(application.getApplicationContext());
         initGeners();
         initDataSource();
     }
@@ -38,7 +42,8 @@ public class MovieListViewModel extends ViewModel {
     private void initDataSource() {
         Timber.d("initDataSource");
         Executor executor = Executors.newFixedThreadPool(5);
-        MovieDataSourceFactory movieDataFactory = new MovieDataSourceFactory();
+        MovieDataSourceFactory movieDataFactory = new MovieDataSourceFactory(
+                getApplication().getApplicationContext());
         PagedList.Config config = (new PagedList.Config.Builder())
                 .setEnablePlaceholders(false)
                 .setInitialLoadSizeHint(10)

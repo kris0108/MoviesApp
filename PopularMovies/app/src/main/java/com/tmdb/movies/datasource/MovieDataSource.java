@@ -1,6 +1,7 @@
 package com.tmdb.movies.datasource;
 
 import android.arch.paging.PageKeyedDataSource;
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.tmdb.movies.model.Movie;
@@ -19,10 +20,9 @@ public class MovieDataSource extends PageKeyedDataSource<Integer, Movie> {
     private MovieApiRepository mMovieApiRepository;
     private MovieAPI mMovieApi;
 
-    public MovieDataSource() {
-        mMovieApiRepository = MovieApiRepository.getInstance();
+    public MovieDataSource(Context context) {
+        mMovieApiRepository = MovieApiRepository.getInstance(context);
     }
-
 
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Integer> params,

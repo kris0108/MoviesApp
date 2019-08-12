@@ -24,12 +24,6 @@ public class MovieListAdapter extends PagedListAdapter<Movie, MovieListAdapter.M
 
     private SparseArray<String> mGenreMap;
 
-    //private final MovieListAdapter.MovieListAdapterOnClickHandler mOnClickHandler;
-
-    /*public interface MovieListAdapterOnClickHandler {
-        void onItemClick(Movie movie);
-    }*/
-
     private final MovieListOnClickHandler mOnClickHandler;
 
     public MovieListAdapter(MovieListOnClickHandler onClickHandler) {
