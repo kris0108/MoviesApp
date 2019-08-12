@@ -19,5 +19,5 @@ Libraries used:
 
 Additional features:
 1. Supported backward compatibility up to API 21
-2. Added SearchView in the home 
+2. Added SearchView in the home page
 3. Provided cache mechanism using Interceptor
